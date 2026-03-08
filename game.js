@@ -303,6 +303,17 @@ function updateCardTray() {
         }
     }
     slots.innerHTML = html;
+
+    // Tap-to-toggle tooltips on mobile
+    slots.querySelectorAll('.tray-slot.filled').forEach((slot) => {
+        slot.addEventListener('click', () => {
+            const wasActive = slot.classList.contains('tooltip-active');
+            slots.querySelectorAll('.tray-slot.filled').forEach((s) =>
+                s.classList.remove('tooltip-active'),
+            );
+            if (!wasActive) slot.classList.add('tooltip-active');
+        });
+    });
 }
 
 // --- Price Engine ---------------------------------------------
@@ -806,7 +817,7 @@ function renderBoroughAction(boroughId) {
         <span class="drug-col-price">BUY</span>
         <span class="drug-col-price">SELL</span>
         <span class="drug-col-held">HELD</span>
-        <span style="margin-left:auto;width:180px;text-align:center">TRADE</span>
+        <span class="drug-col-trade" style="margin-left:auto;width:180px;text-align:center">TRADE</span>
     </div>`;
 
     drugs.forEach((drug) => {

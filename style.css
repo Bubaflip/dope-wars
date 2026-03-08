@@ -955,45 +955,70 @@ h2 {
         height: 100%;
     }
 
-    /* HUD */
+    /* === HUD — two-row layout === */
     .hud {
-        font-size: 7px;
+        font-size: 8px;
         padding: 6px 8px;
         flex-wrap: wrap;
         gap: 4px;
     }
 
-    .hud-left,
-    .hud-right {
+    .hud-left {
+        order: 1;
         gap: 6px;
+    }
+
+    .hud-right {
+        order: 2;
+        margin-left: auto;
+        gap: 6px;
+    }
+
+    .hud-center {
+        order: 3;
+        width: 100%;
+        text-align: center;
     }
 
     .hud-rank { font-size: 8px; }
     .hud-target { font-size: 8px; padding: 2px 6px; }
 
-    /* Card tray */
+    /* === Card tray — tap-to-view tooltips === */
     .card-tray {
-        padding: 4px 8px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        padding: 4px 6px;
+        gap: 4px;
     }
 
+    .card-tray-label { display: none; }
+
     .tray-slot {
-        width: 100px;
-        height: 48px;
+        width: 64px;
+        height: 44px;
         flex-shrink: 0;
     }
 
-    .tray-slot .tray-card-name { font-size: 6px; }
-    .tray-slot .tray-card-desc { font-size: 5px; }
+    .tray-slot .tray-card-name { font-size: 5px; }
+    .tray-slot .tray-card-desc { display: none; }
+    .tray-slot .tray-card-rarity { font-size: 5px; }
 
-    /* Tooltips don't work on mobile — hide them */
+    /* Hide tooltips by default on mobile (no hover) */
     .tray-tooltip { display: none !important; }
+
+    /* Show tooltip when tapped (tooltip-active toggled via JS) */
+    .tray-slot.tooltip-active .tray-tooltip {
+        display: block !important;
+        pointer-events: auto;
+    }
 
     /* Title */
     #screen-title h1 { font-size: 28px; }
     .subtitle { font-size: 8px; }
     .permadeath-note { font-size: 7px; }
+
+    .title-divider {
+        width: 60%;
+        max-width: 200px;
+    }
 
     /* Buttons — touch-friendly sizes */
     .btn {
@@ -1004,50 +1029,66 @@ h2 {
 
     .btn-buy,
     .btn-sell {
-        font-size: 9px;
-        padding: 10px 12px;
-        min-height: 40px;
-    }
-
-    .btn-max {
+        font-size: 8px;
         padding: 8px 10px;
         min-height: 40px;
     }
 
+    .btn-max {
+        font-size: 7px;
+        padding: 6px 8px;
+        min-height: 36px;
+    }
+
     /* Layouts */
     .day-start-layout {
-        padding: 36px 12px 80px;
+        padding: 36px 12px 70px;
     }
 
     .action-layout {
-        padding: 36px 10px 80px;
+        padding: 36px 8px 70px;
     }
 
     .action-content {
         max-width: 100%;
+        padding: 0 2px;
     }
 
     .center-layout {
-        padding: 20px 12px 80px;
+        padding: 20px 12px 70px;
     }
 
-    /* Drug table */
+    /* === Drug table — two-row layout per drug === */
+    .drug-table-header {
+        padding: 4px 6px;
+        font-size: 7px;
+    }
+
+    .drug-col-trade { display: none; }
+
     .drug-row {
+        flex-wrap: wrap;
         font-size: 9px;
-        padding: 8px 6px;
-        gap: 4px;
+        padding: 6px 6px;
+        gap: 2px;
     }
 
-    .drug-col-name { width: 70px; font-size: 8px; }
-    .drug-col-price { width: 55px; font-size: 8px; }
-    .drug-col-held { width: 35px; font-size: 8px; }
+    .drug-col-name { width: 60px; font-size: 8px; }
+    .drug-col-price { width: 50px; font-size: 8px; }
+    .drug-col-held { width: 30px; font-size: 8px; }
 
-    .drug-controls { gap: 4px; }
+    .drug-controls {
+        width: 100%;
+        margin-left: 0;
+        justify-content: center;
+        gap: 3px;
+        padding-top: 4px;
+    }
 
     .qty-input {
-        width: 32px;
+        width: 30px;
         font-size: 8px;
-        padding: 6px 2px;
+        padding: 5px 2px;
     }
 
     /* Cards */
@@ -1075,14 +1116,17 @@ h2 {
         padding: 16px;
     }
 
-    /* Map sidebar */
+    /* === Map — hide sidebar, bigger touch targets === */
     .map-sidebar {
-        width: 160px;
-        font-size: 7px;
+        display: none;
     }
 
     .map-region-name {
-        font-size: 7px;
+        font-size: 8px;
+    }
+
+    .map-region {
+        min-height: 44px;
     }
 
     /* Summary */
