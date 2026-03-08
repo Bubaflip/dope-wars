@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#0c0c0f">
+    <title>Dope Wars</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas" width="800" height="600"></canvas>
+
+        <!-- Persistent HUD (top bar) -->
+        <div id="hud" class="hud hidden">
+            <div class="hud-left">
+                <span id="hud-rank" class="hud-rank"></span>
+                <span id="hud-round-day"></span>
+            </div>
+            <div class="hud-center">
+                <span id="hud-target" class="hud-target"></span>
+            </div>
+            <div class="hud-right">
+                <span id="hud-cash"></span>
+                <span id="hud-bank"></span>
+                <span id="hud-debt" class="hud-debt"></span>
+                <span id="hud-bag"></span>
+            </div>
+        </div>
+
+        <!-- Persistent Card Tray (bottom) -->
+        <div id="card-tray" class="card-tray hidden">
+            <div class="card-tray-label">CONNECTIONS</div>
+            <div id="card-tray-slots" class="card-tray-slots"></div>
+        </div>
+
+        <!-- Title Screen -->
+        <div id="screen-title" class="screen">
+            <div class="title-container">
+                <h1>DOPE<br>WARS</h1>
+                <div class="title-divider"></div>
+                <p class="subtitle">NYC, 1986. Rise through the ranks.<br>Own the streets. Don't get caught.</p>
+                <button id="btn-new-game" class="btn btn-primary">NEW GAME</button>
+                <p class="permadeath-note">PERMADEATH — ONE LIFE, NO SAVES</p>
+            </div>
+        </div>
+
+        <!-- Day Start Screen -->
+        <div id="screen-day-start" class="screen hidden">
+            <div class="day-start-layout">
+                <h2 id="ds-day-title"></h2>
+                <div id="ds-bag" class="bag-display"></div>
+                <div id="ds-events" class="events-panel"></div>
+                <div id="ds-card-offer" class="card-offer hidden"></div>
+                <div id="ds-bag-offer" class="card-offer hidden"></div>
+                <button id="btn-proceed" class="btn btn-primary">CHOOSE LOCATION</button>
+            </div>
+        </div>
+
+        <!-- Location Select Screen (canvas map) -->
+        <div id="screen-location-select" class="screen screen-transparent hidden">
+        </div>
+
+        <!-- Location Action Screen -->
+        <div id="screen-location-action" class="screen hidden">
+            <div class="action-layout">
+                <h2 id="la-location-name"></h2>
+                <div id="la-content" class="action-content"></div>
+                <div class="action-footer">
+                    <button id="btn-subway" class="btn btn-subway hidden">USE SUBWAY PASS</button>
+                    <button id="btn-end-day" class="btn btn-primary">END DAY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Day End Screen -->
+        <div id="screen-day-end" class="screen hidden">
+            <div class="center-layout">
+                <h2>Day Complete</h2>
+                <div id="de-summary" class="summary-panel"></div>
+                <button id="btn-next-day" class="btn btn-primary">NEXT DAY</button>
+            </div>
+        </div>
+
+        <!-- Round End Screen -->
+        <div id="screen-round-end" class="screen hidden">
+            <div class="center-layout">
+                <h2 id="re-title"></h2>
+                <div id="re-content" class="summary-panel"></div>
+                <button id="btn-next-round" class="btn btn-primary hidden">NEXT ROUND</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="screen-game-over" class="screen hidden">
+            <div class="center-layout">
+                <h1 class="game-over-text">GAME OVER</h1>
+                <p id="go-reason" class="go-reason"></p>
+                <div id="go-stats" class="summary-panel"></div>
+                <button id="btn-restart" class="btn btn-primary">TRY AGAIN</button>
+            </div>
+        </div>
+
+        <!-- Win Screen -->
+        <div id="screen-win" class="screen hidden">
+            <div class="center-layout">
+                <h1 class="win-text">YOU ARE THE KINGPIN</h1>
+                <p class="win-sub">You conquered the streets of New York City.</p>
+                <div id="win-stats" class="summary-panel"></div>
+                <button id="btn-win-restart" class="btn btn-primary">PLAY AGAIN</button>
+            </div>
+        </div>
+
+        <!-- Discard Modal -->
+        <div id="modal-discard" class="modal hidden">
+            <div class="modal-content">
+                <h3>Replace a Connection</h3>
+                <p>Your crew is full. Choose one to replace:</p>
+                <div id="discard-cards"></div>
+                <button id="btn-cancel-discard" class="btn btn-secondary btn-small">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop preload="auto"
+           src="Ghetto Concept - E-Z On Tha Motion (Instrumental) - Will B. Smooth.mp3"></audio>
+    <script src="game.js"></script>
+</body>
+</html>
