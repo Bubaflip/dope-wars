@@ -99,7 +99,7 @@ const MAP_LOCATIONS = [
     { id: 'manhattan', name: 'MANHATTAN',    type: 'borough', top: 28, left: 36, w: 16, h: 12 },
     { id: 'queens',    name: 'QUEENS',       type: 'borough', top: 24, left: 58, w: 16, h: 12 },
     { id: 'brooklyn',  name: 'BROOKLYN',     type: 'borough', top: 48, left: 46, w: 16, h: 12 },
-    // Special locations — in the water / bottom area, above card tray
+    // Special locations — bottom area, above card tray
     { id: 'connect',   name: 'THE CONNECT',  type: 'special', top: 62, left: 8,  w: 16, h: 12 },
     { id: 'bank',      name: 'THE BANK',     type: 'special', top: 62, left: 34, w: 16, h: 12 },
     { id: 'shark',     name: 'THE SHARK',    type: 'special', top: 62, left: 60, w: 16, h: 12 },
@@ -260,19 +260,25 @@ function updateHud() {
     }
     hud.classList.remove('hidden');
     const rank = getRankInfo();
+    const isMobile = window.innerWidth <= 820;
     $('#hud-rank').textContent = rank.title;
     $('#hud-round-day').textContent = `R${state.round} D${state.day}/7`;
     $('#hud-target').textContent = `TARGET: ${fmt(rank.target)}`;
-    $('#hud-cash').textContent = `Cash ${fmt(state.cash)}`;
-    $('#hud-bank').textContent = `Bank ${fmt(state.bank)}`;
+    $('#hud-cash').textContent = isMobile ? fmt(state.cash) : `Cash ${fmt(state.cash)}`;
+    const bankEl = $('#hud-bank');
+    if (isMobile && state.bank === 0) {
+        bankEl.textContent = '';
+    } else {
+        bankEl.textContent = isMobile ? `B:${fmt(state.bank)}` : `Bank ${fmt(state.bank)}`;
+    }
     const debtEl = $('#hud-debt');
     if (state.debt > 0) {
-        debtEl.textContent = `Debt ${fmt(state.debt)}`;
+        debtEl.textContent = isMobile ? `D:${fmt(state.debt)}` : `Debt ${fmt(state.debt)}`;
         debtEl.classList.remove('hidden');
     } else {
         debtEl.textContent = '';
     }
-    $('#hud-bag').textContent = `Bag ${getBagCount()}/${getBagCapacity()}`;
+    $('#hud-bag').textContent = `${getBagCount()}/${getBagCapacity()}`;
     updateCardTray();
 }
 

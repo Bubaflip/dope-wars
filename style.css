@@ -1221,62 +1221,58 @@ input[type="range"]::-moz-range-thumb {
             );
     }
 
-    /* Reduce glow intensities on mobile */
+    /* ====================================================
+       HUD — single compact row, no wrapping
+       ==================================================== */
     .hud {
+        font-size: 8px;
+        padding: 6px 10px;
+        flex-wrap: nowrap;
+        gap: 6px;
         box-shadow: 0 1px 6px rgba(255, 45, 123, 0.06);
         backdrop-filter: blur(4px);
     }
 
-    .card-tray {
-        box-shadow: 0 -1px 6px rgba(0, 212, 255, 0.05);
-        backdrop-filter: blur(4px);
-    }
-
-    /* === HUD — two-row layout === */
-    .hud {
-        font-size: 8px;
-        padding: 6px 8px;
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-
     .hud-left {
-        order: 1;
-        gap: 6px;
+        gap: 5px;
+        flex-shrink: 0;
     }
 
     .hud-right {
-        order: 2;
-        margin-left: auto;
-        gap: 6px;
+        gap: 5px;
+        flex-shrink: 1;
+        min-width: 0;
     }
 
     .hud-center {
-        order: 3;
-        width: 100%;
-        text-align: center;
+        flex-shrink: 0;
     }
 
     .hud-rank { font-size: 8px; }
-    .hud-target { font-size: 8px; padding: 2px 6px; }
+    .hud-target { font-size: 7px; padding: 1px 5px; }
 
-    /* === Card tray — tap-to-view tooltips === */
+    /* ====================================================
+       Card Tray — slim, compact
+       ==================================================== */
     .card-tray {
         padding: 4px 6px;
         gap: 4px;
+        box-shadow: 0 -1px 6px rgba(0, 212, 255, 0.05);
+        backdrop-filter: blur(4px);
     }
 
     .card-tray-label { display: none; }
 
     .tray-slot {
-        width: 64px;
-        height: 44px;
+        width: 56px;
+        height: 40px;
         flex-shrink: 0;
     }
 
     .tray-slot .tray-card-name { font-size: 5px; }
     .tray-slot .tray-card-desc { display: none; }
     .tray-slot .tray-card-rarity { font-size: 5px; }
+    .tray-slot.empty::after { font-size: 14px; }
 
     /* Hide tooltips by default on mobile (no hover) */
     .tray-tooltip { display: none !important; }
@@ -1287,7 +1283,9 @@ input[type="range"]::-moz-range-thumb {
         pointer-events: auto;
     }
 
-    /* Title */
+    /* ====================================================
+       Title Screen
+       ==================================================== */
     #screen-title h1 { font-size: 28px; }
     .subtitle { font-size: 9px; }
     .permadeath-note { font-size: 7px; }
@@ -1297,36 +1295,71 @@ input[type="range"]::-moz-range-thumb {
         max-width: 200px;
     }
 
-    /* Buttons — touch-friendly sizes */
+    /* ====================================================
+       Buttons — touch-friendly
+       ==================================================== */
     .btn {
         font-size: 10px;
-        padding: 14px 20px;
+        padding: 12px 18px;
         min-height: 44px;
     }
 
-    /* Layouts */
+    /* ====================================================
+       Screens — allow scroll on mobile
+       ==================================================== */
+    .screen {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .screen-transparent {
+        overflow: hidden;
+    }
+
+    /* ====================================================
+       Screen Layouts — proper HUD/tray clearance
+       HUD is ~32px, card tray ~48px on mobile.
+       ==================================================== */
     .day-start-layout {
-        padding: 36px 12px 70px;
+        padding: 38px 12px 56px;
+        gap: 6px;
+        justify-content: flex-start;
+    }
+
+    .day-start-layout h2 {
+        font-size: 12px;
+        margin-bottom: 2px;
     }
 
     .action-layout {
-        padding: 36px 8px 70px;
+        padding: 38px 10px 56px;
+    }
+
+    .action-layout h2 {
+        font-size: 13px;
+        margin-bottom: 4px;
     }
 
     .action-content {
         max-width: 100%;
-        padding: 0 2px;
+        padding: 0;
+    }
+
+    .action-footer {
+        padding: 6px 0 2px;
     }
 
     .center-layout {
-        padding: 20px 12px 70px;
+        padding: 38px 12px 56px;
     }
 
-    /* === Drug table — two-row layout per drug === */
+    /* ====================================================
+       Drug Trading — compact single-row per drug
+       ==================================================== */
     .drug-table-header {
         padding: 4px 6px;
         font-size: 7px;
-        gap: 4px;
+        gap: 0;
     }
 
     .drug-col-trade { display: none !important; }
@@ -1334,22 +1367,194 @@ input[type="range"]::-moz-range-thumb {
     .drug-row {
         flex-wrap: wrap;
         font-size: 9px;
-        padding: 6px 6px;
-        gap: 4px;
+        padding: 5px 6px;
+        gap: 3px;
     }
 
-    .drug-col-name { width: 55px; font-size: 7px; }
-    .drug-col-price { width: 48px; font-size: 8px; }
-    .drug-col-held { width: 28px; font-size: 8px; }
+    .drug-col-name {
+        width: 60px;
+        font-size: 10px;
+        font-weight: 500;
+    }
+
+    .drug-col-price {
+        width: 50px;
+        font-size: 10px;
+    }
+
+    .drug-col-held {
+        width: 24px;
+        font-size: 10px;
+    }
 
     .drug-controls {
         flex-basis: 100%;
         width: 100%;
         margin-left: 0 !important;
         justify-content: center;
-        gap: 4px;
+        gap: 3px;
         padding-top: 2px;
     }
+
+    .btn-buy,
+    .btn-sell {
+        font-size: 8px;
+        padding: 8px 10px;
+        min-height: 36px;
+    }
+
+    .btn-max {
+        font-size: 7px;
+        padding: 6px 7px;
+        min-height: 36px;
+    }
+
+    .qty-input {
+        width: 32px;
+        font-size: 10px;
+        padding: 6px 2px;
+        min-height: 36px;
+    }
+
+    /* ====================================================
+       Connection Cards — 2-column grid filling space
+       ==================================================== */
+    .card-shop {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 4px 0;
+    }
+
+    .connection-card {
+        width: 100%;
+        padding: 10px 8px;
+    }
+
+    .connection-card .card-name { font-size: 9px; }
+    .connection-card .card-rarity { font-size: 7px; }
+    .connection-card .card-desc { font-size: 8px; line-height: 1.4; }
+    .connection-card .card-price { font-size: 9px; }
+
+    .card-uncommon {
+        box-shadow: 0 0 4px rgba(0, 212, 255, 0.1);
+    }
+
+    .card-rare {
+        box-shadow: 0 0 6px rgba(245, 166, 35, 0.15);
+    }
+
+    /* Card offers on day start */
+    .card-offer {
+        max-width: 100%;
+    }
+
+    .map-card-offer .connection-card {
+        width: 100%;
+    }
+
+    /* ====================================================
+       Bank / Shark — full width sliders
+       ==================================================== */
+    .bank-ui input[type="range"],
+    .shark-ui input[type="range"] {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .amount-display { font-size: 16px; }
+
+    /* ====================================================
+       Modal
+       ==================================================== */
+    .modal-content {
+        max-width: 90vw;
+        padding: 16px;
+    }
+
+    /* ====================================================
+       Map — bigger touch targets, clear of tray
+       ==================================================== */
+    .map-sidebar {
+        display: none;
+    }
+
+    .map-container {
+        /* Shrink map area so special locations don't hide behind card tray */
+        height: calc(100% - 48px);
+    }
+
+    .map-region-name {
+        font-size: 9px;
+        letter-spacing: 3px;
+    }
+
+    .map-region {
+        min-height: 48px;
+    }
+
+    .map-special {
+        min-height: 52px;
+    }
+
+    /* ====================================================
+       Summary / Bag / Events — full width
+       ==================================================== */
+    .summary-panel {
+        max-width: 100%;
+    }
+
+    .bag-display {
+        max-width: 100%;
+    }
+
+    .events-panel {
+        max-width: 100%;
+    }
+
+    .event-msg {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+
+    .go-reason {
+        max-width: 90vw;
+    }
+
+    /* Reduced glow on game over / win */
+    .game-over-text {
+        font-size: 28px;
+        text-shadow:
+            3px 3px 0 var(--red-dark),
+            0 0 12px rgba(230, 57, 70, 0.4),
+            0 0 24px rgba(230, 57, 70, 0.15);
+    }
+
+    .win-text {
+        font-size: 18px;
+        text-shadow:
+            3px 3px 0 var(--gold-dark),
+            0 0 12px rgba(245, 166, 35, 0.3),
+            0 0 24px rgba(245, 166, 35, 0.12);
+    }
+}
+
+/* ====================================================
+   Small phones (< 400px) — extra compact
+   ==================================================== */
+@media (max-width: 400px) {
+    .hud {
+        font-size: 7px;
+        padding: 5px 8px;
+        gap: 4px;
+    }
+
+    .hud-rank { font-size: 7px; }
+    .hud-target { font-size: 6px; padding: 1px 4px; }
+
+    .drug-col-name { font-size: 9px; width: 54px; }
+    .drug-col-price { font-size: 9px; width: 46px; }
+    .drug-col-held { font-size: 9px; width: 22px; }
 
     .btn-buy,
     .btn-sell {
@@ -1364,89 +1569,14 @@ input[type="range"]::-moz-range-thumb {
 
     .qty-input {
         width: 28px;
-        font-size: 7px;
-        padding: 5px 2px;
+        font-size: 9px;
     }
 
-    /* Cards — reduced glow */
-    .connection-card {
-        width: 110px;
-        padding: 8px 6px;
-    }
+    .connection-card .card-name { font-size: 8px; }
+    .connection-card .card-desc { font-size: 7px; }
 
-    .card-uncommon {
-        box-shadow: 0 0 4px rgba(0, 212, 255, 0.1);
-    }
-
-    .card-rare {
-        box-shadow: 0 0 6px rgba(245, 166, 35, 0.15);
-    }
-
-    .card-shop {
-        gap: 6px;
-    }
-
-    /* Bank / Shark */
-    .bank-ui input[type="range"],
-    .shark-ui input[type="range"] {
-        width: 100%;
-        max-width: 280px;
-    }
-
-    .amount-display { font-size: 16px; }
-
-    /* Modal */
-    .modal-content {
-        max-width: 90vw;
-        padding: 16px;
-    }
-
-    /* === Map — hide sidebar, bigger touch targets === */
-    .map-sidebar {
-        display: none;
-    }
-
-    .map-region-name {
-        font-size: 8px;
-    }
-
-    .map-region {
-        min-height: 44px;
-    }
-
-    /* Summary */
-    .summary-panel {
-        max-width: 100%;
-    }
-
-    .bag-display {
-        max-width: 100%;
-    }
-
-    .events-panel {
-        max-width: 100%;
-    }
-
-    .card-offer {
-        max-width: 100%;
-    }
-
-    .go-reason {
-        max-width: 90vw;
-    }
-
-    /* Reduced glow on game over / win */
-    .game-over-text {
-        text-shadow:
-            3px 3px 0 var(--red-dark),
-            0 0 12px rgba(230, 57, 70, 0.4),
-            0 0 24px rgba(230, 57, 70, 0.15);
-    }
-
-    .win-text {
-        text-shadow:
-            3px 3px 0 var(--gold-dark),
-            0 0 12px rgba(245, 166, 35, 0.3),
-            0 0 24px rgba(245, 166, 35, 0.12);
+    .tray-slot {
+        width: 50px;
+        height: 36px;
     }
 }
