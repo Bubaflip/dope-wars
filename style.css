@@ -1027,19 +1027,6 @@ h2 {
         min-height: 44px;
     }
 
-    .btn-buy,
-    .btn-sell {
-        font-size: 8px;
-        padding: 8px 10px;
-        min-height: 40px;
-    }
-
-    .btn-max {
-        font-size: 7px;
-        padding: 6px 8px;
-        min-height: 36px;
-    }
-
     /* Layouts */
     .day-start-layout {
         padding: 36px 12px 70px;
@@ -1062,32 +1049,45 @@ h2 {
     .drug-table-header {
         padding: 4px 6px;
         font-size: 7px;
+        gap: 4px;
     }
 
-    .drug-col-trade { display: none; }
+    .drug-col-trade { display: none !important; }
 
     .drug-row {
         flex-wrap: wrap;
         font-size: 9px;
         padding: 6px 6px;
-        gap: 2px;
+        gap: 4px;
     }
 
-    .drug-col-name { width: 60px; font-size: 8px; }
-    .drug-col-price { width: 50px; font-size: 8px; }
-    .drug-col-held { width: 30px; font-size: 8px; }
+    .drug-col-name { width: 55px; font-size: 7px; }
+    .drug-col-price { width: 48px; font-size: 8px; }
+    .drug-col-held { width: 28px; font-size: 8px; }
 
     .drug-controls {
+        flex-basis: 100%;
         width: 100%;
-        margin-left: 0;
+        margin-left: 0 !important;
         justify-content: center;
-        gap: 3px;
-        padding-top: 4px;
+        gap: 4px;
+        padding-top: 2px;
+    }
+
+    .btn-buy,
+    .btn-sell {
+        font-size: 7px;
+        padding: 7px 8px;
+    }
+
+    .btn-max {
+        font-size: 6px;
+        padding: 5px 6px;
     }
 
     .qty-input {
-        width: 30px;
-        font-size: 8px;
+        width: 28px;
+        font-size: 7px;
         padding: 5px 2px;
     }
 
