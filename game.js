@@ -134,6 +134,7 @@ function newGameState() {
         kingpinLoanUsed: false,
         selectedLocation: null,
         dayTransactions: [],
+        lastBorough: 'brooklyn',
     };
 }
 
@@ -752,16 +753,42 @@ function initLocationSelect() {
 
     html += '</div>';
 
-    // Map regions
+    // Map regions (boroughs + specials on map)
     MAP_LOCATIONS.forEach((loc) => {
         const cls = loc.type === 'borough' ? 'map-borough' : 'map-special';
         html += `<div class="map-region ${cls}" data-loc="${loc.id}"
             style="top:${loc.top}%;left:${loc.left}%;width:${loc.w}%;height:${loc.h}%">
             <span class="map-region-name">${loc.name}</span>
+            ${loc.type === 'borough' ? '<span class="map-day-cost">1 DAY</span>' : ''}
         </div>`;
     });
 
+    // Player marker at last visited borough
+    const markerLoc = MAP_LOCATIONS.find((l) => l.id === state.lastBorough);
+    if (markerLoc) {
+        const markerTop = markerLoc.top + markerLoc.h / 2;
+        const markerLeft = markerLoc.left + markerLoc.w / 2;
+        html += `<div class="player-marker" style="top:${markerTop}%;left:${markerLeft}%">
+            <div class="player-marker-dot"></div>
+            <div class="player-marker-pulse"></div>
+            <div class="player-marker-label">YOU</div>
+        </div>`;
+    }
+
     html += '</div>';
+
+    // Special location dock
+    html += '<div class="map-special-dock">';
+    SPECIAL_LOCATIONS.forEach((loc) => {
+        const letter = loc.id === 'connect' ? 'C' : loc.id === 'bank' ? 'B' : 'S';
+        html += `<div class="dock-btn" data-loc="${loc.id}">
+            <div class="dock-btn-letter">${letter}</div>
+            <div class="dock-btn-name">${loc.name.toUpperCase()}</div>
+            <div class="dock-btn-day">1 DAY</div>
+        </div>`;
+    });
+    html += '</div>';
+
     screen.innerHTML = html;
 
     // Click handlers for map regions
@@ -772,6 +799,13 @@ function initLocationSelect() {
         });
     });
 
+    // Click handlers for dock buttons
+    screen.querySelectorAll('.dock-btn').forEach((el) => {
+        el.addEventListener('click', () => {
+            state.selectedLocation = el.dataset.loc;
+            initLocationAction(el.dataset.loc);
+        });
+    });
 }
 
 // --- Screen: Location Action ---------------------------------
@@ -779,6 +813,8 @@ function initLocationSelect() {
 function initLocationAction(locId) {
     showScreen('screen-location-action');
     state.selectedLocation = locId;
+    const borough = BOROUGHS.find((b) => b.id === locId);
+    if (borough) state.lastBorough = locId;
     renderLocationAction(locId);
 }
 
@@ -818,13 +854,7 @@ function renderBoroughAction(boroughId) {
     const drugs = getUnlockedDrugs();
     const prices = state.prices[boroughId];
 
-    let html = `<div class="drug-table-header">
-        <span class="drug-col-name">DRUG</span>
-        <span class="drug-col-price">BUY</span>
-        <span class="drug-col-price">SELL</span>
-        <span class="drug-col-held">HELD</span>
-        <span class="drug-col-trade" style="margin-left:auto;width:180px;text-align:center">TRADE</span>
-    </div>`;
+    let html = '<div class="drug-cards-container">';
 
     drugs.forEach((drug) => {
         const p = prices[drug.id];
@@ -834,6 +864,7 @@ function renderBoroughAction(boroughId) {
         const spiked = state.spikes.includes(drug.id);
         const crashed = state.crashes.includes(drug.id);
         const spikeClass = spiked ? 'price-spike' : crashed ? 'price-crash' : '';
+        const cardClass = spiked ? 'drug-card-spike' : crashed ? 'drug-card-crash' : '';
 
         let buyPrice = p.buy;
         if (hasConnection('HAGGLER')) buyPrice = Math.floor(buyPrice * 0.9);
@@ -843,36 +874,80 @@ function renderBoroughAction(boroughId) {
 
         const maxBuyable = Math.min(
             buyPrice > 0 ? Math.floor(state.cash / buyPrice) : 0,
-            getBagCapacity() - getBagCount()
+            getBagCapacity() - getBagCount(),
         );
 
-        const avgPrice = held && held.totalCost && held.quantity > 0
-            ? fmt(Math.floor(held.totalCost / held.quantity))
-            : '';
-        const avgLabel = avgPrice ? ` <span class="drug-avg">avg ${avgPrice}</span>` : '';
+        const avgCost = held && held.totalCost && held.quantity > 0
+            ? Math.floor(held.totalCost / held.quantity)
+            : 0;
+        const profitPerUnit = heldQty > 0 ? p.sell - avgCost : 0;
+        const profitClass = profitPerUnit >= 0 ? 'profit-positive' : 'profit-negative';
+        const profitSign = profitPerUnit >= 0 ? '+' : '';
 
-        html += `
-            <div class="drug-row">
-                <span class="drug-col-name ${spikeClass}">${drug.name}${spiked ? ' *' : crashed ? ' v' : ''}${avgLabel}</span>
-                <span class="drug-col-price ${spikeClass}">${fmt(buyPrice)}</span>
-                <span class="drug-col-price ${spikeClass}">${fmt(p.sell)}</span>
-                <span class="drug-col-held">${heldQty}</span>
-                <div class="drug-controls">
-                    <button class="btn btn-max" data-drug="${drug.id}" data-price="${buyPrice}" data-action="max-buy"
-                        ${maxBuyable <= 0 ? 'disabled' : ''}>MAX</button>
-                    <button class="btn btn-buy" data-drug="${drug.id}" data-price="${buyPrice}" data-action="buy"
-                        ${maxBuyable <= 0 ? 'disabled' : ''}>BUY</button>
-                    <input type="number" class="qty-input" id="qty-${drug.id}" value="1" min="1" max="99">
-                    <button class="btn btn-sell" data-drug="${drug.id}" data-sell="${p.sell}" data-action="sell"
-                        ${heldQty <= 0 ? 'disabled' : ''}>SELL</button>
-                    <button class="btn btn-max" data-drug="${drug.id}" data-sell="${p.sell}" data-action="max-sell"
-                        ${heldQty <= 0 ? 'disabled' : ''}>MAX</button>
-                </div>
+        html += `<div class="drug-card ${cardClass}" data-drug="${drug.id}">`;
+
+        // Header row
+        html += `<div class="drug-card-header">
+            <span class="drug-card-name ${spikeClass}">${drug.name}${spiked ? ' \u2605' : crashed ? ' \u25BC' : ''}</span>`;
+        if (heldQty > 0) {
+            html += `<span class="drug-card-avg">avg ${fmt(avgCost)}</span>`;
+            html += `<span class="drug-card-held">\u00D7${heldQty}</span>`;
+        }
+        html += '</div>';
+
+        // Prices row
+        html += `<div class="drug-card-prices">
+            <div class="drug-price-col">
+                <span class="drug-price-label">BUY</span>
+                <span class="drug-price-value ${spikeClass}">${fmt(buyPrice)}</span>
             </div>
-        `;
+            <div class="drug-price-col">
+                <span class="drug-price-label">SELL</span>
+                <span class="drug-price-value ${spikeClass}">${fmt(p.sell)}</span>
+            </div>`;
+        if (heldQty > 0) {
+            html += `<span class="drug-card-profit ${profitClass}">${profitSign}${fmt(Math.abs(profitPerUnit))} ea</span>`;
+        }
+        html += '</div>';
+
+        // Controls row
+        html += `<div class="drug-card-controls">
+            <button class="btn-trade-lg btn btn-buy" data-drug="${drug.id}" data-price="${buyPrice}" data-action="buy"
+                ${maxBuyable <= 0 ? 'disabled' : ''}>BUY</button>
+            <div class="qty-stepper">
+                <button class="qty-stepper-btn" data-drug="${drug.id}" data-step="-1">\u2212</button>
+                <div class="qty-stepper-val" id="qty-${drug.id}">1</div>
+                <button class="qty-stepper-btn" data-drug="${drug.id}" data-step="1">+</button>
+            </div>
+            <button class="btn-trade-lg btn btn-sell" data-drug="${drug.id}" data-sell="${p.sell}" data-action="sell"
+                ${heldQty <= 0 ? 'disabled' : ''}>SELL</button>
+        </div>`;
+
+        // Max buttons row
+        html += `<div class="drug-card-maxes">
+            <button class="btn btn-max" data-drug="${drug.id}" data-price="${buyPrice}" data-action="max-buy"
+                ${maxBuyable <= 0 ? 'disabled' : ''}>MAX BUY (${maxBuyable})</button>
+            <button class="btn btn-max" data-drug="${drug.id}" data-sell="${p.sell}" data-action="max-sell"
+                ${heldQty <= 0 ? 'disabled' : ''}>MAX SELL (${heldQty})</button>
+        </div>`;
+
+        html += '</div>';
     });
 
+    html += '</div>';
     content.innerHTML = html;
+
+    // Stepper handlers
+    content.querySelectorAll('.qty-stepper-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const drugId = btn.dataset.drug;
+            const step = parseInt(btn.dataset.step);
+            const display = document.getElementById(`qty-${drugId}`);
+            const current = parseInt(display.textContent) || 1;
+            const next = Math.max(1, Math.min(99, current + step));
+            display.textContent = next;
+        });
+    });
 
     // Attach trade handlers
     content.querySelectorAll('[data-action]').forEach((btn) => {
@@ -884,14 +959,14 @@ function renderBoroughAction(boroughId) {
                 const price = parseInt(btn.dataset.price);
                 const maxBuyable = Math.min(
                     price > 0 ? Math.floor(state.cash / price) : 0,
-                    getBagCapacity() - getBagCount()
+                    getBagCapacity() - getBagCount(),
                 );
                 let qty;
                 if (action === 'max-buy') {
                     qty = maxBuyable;
                 } else {
-                    const qtyInput = document.getElementById(`qty-${drugId}`);
-                    qty = Math.min(parseInt(qtyInput.value) || 1, maxBuyable);
+                    const display = document.getElementById(`qty-${drugId}`);
+                    qty = Math.min(parseInt(display.textContent) || 1, maxBuyable);
                 }
                 if (qty <= 0) return;
                 const cost = price * qty;
@@ -907,8 +982,8 @@ function renderBoroughAction(boroughId) {
                 if (action === 'max-sell') {
                     qty = held.quantity;
                 } else {
-                    const qtyInput = document.getElementById(`qty-${drugId}`);
-                    qty = Math.min(parseInt(qtyInput.value) || 1, held.quantity);
+                    const display = document.getElementById(`qty-${drugId}`);
+                    qty = Math.min(parseInt(display.textContent) || 1, held.quantity);
                 }
                 if (qty <= 0) return;
                 state.cash += sellPrice * qty;
